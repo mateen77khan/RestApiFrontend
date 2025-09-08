@@ -2,23 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import JournalList from "../components/JournalList";
-import { UseAuth } from "../auth/AuthContext";
 
 export default function Manage() {
     const [journals, setJournals] = useState([]);
     const navigate = useNavigate();
-    const { user } = UseAuth();
 
     const fetchJournals = async () => {
-        // Prefer backend filtering
-        const res = await api.get(`/journal`, { params: user?.id ? { userId: user.id } : {} });
+        const res = await api.get("/journal");
         setJournals(res.data);
     };
 
     useEffect(() => {
         fetchJournals();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id]);
+    }, []);
 
     const deleteJournal = async (id) => {
         await api.delete(`/journal/id/${id}`);
@@ -26,7 +22,7 @@ export default function Manage() {
     };
 
     const editJournal = (journal) => {
-        navigate(`/create`, { state: { journal } });
+        navigate(`/create`, { state: { journal } }); // pass journal to edit
     };
 
     return (
@@ -42,10 +38,14 @@ export default function Manage() {
             </div>
 
             {journals.length > 0 ? (
-                <JournalList journals={journals} onDelete={deleteJournal} onEdit={editJournal} />
+                <JournalList
+                    journals={journals}
+                    onDelete={deleteJournal}
+                    onEdit={editJournal}
+                />
             ) : (
                 <p className="text-gray-500 text-center mt-6">
-                    {user ? "No journals yet. Create your first one! ✨" : "Please login to see your journals."}
+                    No journals yet. Create your first one! ✨
                 </p>
             )}
         </div>
