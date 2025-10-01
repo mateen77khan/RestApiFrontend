@@ -3,6 +3,7 @@ import JournalForm from "../components/JournalForm";
 import api from "../api";
 
 export default function Create() {
+    
     const location = useLocation();
     const navigate = useNavigate();
     const editing = location.state?.journal || null;
